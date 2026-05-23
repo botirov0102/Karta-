@@ -1,0 +1,6 @@
+{
+  "name": "Karta Yasovchi",
+  "description": "36 talik o'yin kartalarini loyihalash, rasm yuklash va A4 formatida Word fayliga sig'dirib yuklab olish platformasi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
