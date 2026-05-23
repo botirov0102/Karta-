@@ -4,6 +4,7 @@ import { PlayingCardView } from './components/PlayingCardView';
 import { PlayingCardBackView } from './components/PlayingCardBackView';
 import { CardEditorModal } from './components/CardEditorModal';
 import { generateFrontDocx, generateBackDocx } from './docxGenerator';
+import { generateFrontPdf, generateBackPdf } from './pdfGenerator';
 import { 
   Layers, 
   Download, 
@@ -73,6 +74,8 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'front' | 'back'>('front');
   // Filters for Front Deck
   const [activeSuitFilter, setActiveSuitFilter] = useState<Suit | 'ALL'>('ALL');
+  // Active render workspace mode ('standard' grid list or 'print' precise A4 sheets)
+  const [viewMode, setViewMode] = useState<'standard' | 'print'>('standard');
   
   // Editor modal bindings
   const [editingCard, setEditingCard] = useState<CardState | null>(null);
@@ -251,6 +254,73 @@ export default function App() {
     }
   };
 
+  // 4. Export Front PDF Document (.pdf) - Perfect 3x3 A4 Sheets Layout
+  const handleDownloadFrontPdf = async () => {
+    setDocxTask({
+      active: true,
+      current: 0,
+      total: deck.length,
+      title: "oldi.pdf hujjati tayyorlanmoqda (A4 3x3)"
+    });
+
+    try {
+      const blob = await generateFrontPdf(deck, (current, total) => {
+        setDocxTask(prev => prev ? { ...prev, current, total } : null);
+      });
+
+      // Browser download
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'oldi_tarafi_3x3_8.5x5.5.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("PDF generatsiya qilishda xatolik yuz berdi.");
+    } finally {
+      setDocxTask(null);
+    }
+  };
+
+  // Export Back PDF Document (.pdf) - Perfect 3x3 A4 Sheets Layout
+  const handleDownloadBackPdf = async () => {
+    setDocxTask({
+      active: true,
+      current: 0,
+      total: 4,
+      title: "orqa.pdf hujjati tayyorlanmoqda (A4 3x3)"
+    });
+
+    try {
+      const blob = await generateBackPdf(back, (current, total) => {
+        setDocxTask(prev => prev ? { ...prev, current, total } : null);
+      });
+
+      // Browser download
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'orqa_tarafi_3x3_8.5x5.5.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("PDF generatsiya qilishda xatolik yuz berdi.");
+    } finally {
+      setDocxTask(null);
+    }
+  };
+
+  // Direct Browser Printer Trigger
+  const handleDirectPrint = () => {
+    window.print();
+  };
+
   // Helpers for stats and counts
   const countCustomizedFronts = deck.filter(c => c.imageSrc !== null).length;
   const filteredDeck = activeSuitFilter === 'ALL' ? deck : deck.filter(c => c.suit === activeSuitFilter);
@@ -363,49 +433,112 @@ export default function App() {
               <p className="font-bold text-slate-800 text-xs uppercase tracking-wider mb-1.5 flex items-center gap-1">
                 <InfoIcon className="h-3.5 w-3.5 text-[#2563EB]" /> O'lcham & Miqdor andozalari:
               </p>
-              <div><strong>Format o'lchami:</strong> 8.5 sm × 5.5 sm</div>
-              <div><strong>Karta soni:</strong> 36 ta karta (4 ta A4 qog'oz)</div>
-              <div><strong>Zichlik maslahati:</strong> 250g - 300g qalinlikdagi qog'oz ishlating</div>
+              <div><strong>Karta o'lchami:</strong> 8.5 sm × 5.5 sm (Aniq)</div>
+              <div><strong>Varaq sig'imi:</strong> Har bir A4 da 9 tadan karta (3×3)</div>
+              <div><strong>Araliq masofa:</strong> Qirqish uchun 1 sm bo'sh joy</div>
+              <div><strong>Jami:</strong> 36 ta karta (4 ta A4 varaq)</div>
             </div>
 
-            {/* HUJJATLARNI YUKLASH (EXPORTER ACTIONS) */}
-            <div className="space-y-3">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Yuklab olinadigan hujjatlar:</p>
+            {/* VIEW MODE SWITCHER (NATIVE PREVIEW CONTROLS) */}
+            <div className="space-y-2 border-t border-slate-100 pt-3">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ko'rinish rejimi:</p>
+              <div className="grid grid-cols-2 gap-1.5 bg-slate-100 p-1 rounded-xl">
+                <button
+                  onClick={() => setViewMode('standard')}
+                  className={`py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                    viewMode === 'standard'
+                      ? 'bg-white text-slate-800 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  🗂️ Oddiy Grid
+                </button>
+                <button
+                  onClick={() => setViewMode('print')}
+                  className={`py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                    viewMode === 'print'
+                      ? 'bg-white text-slate-800 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  🖨️ A4 Varaqlar
+                </button>
+              </div>
+            </div>
+
+            {/* PDF DOWNLOAD CONTROLS (TAVSIYA ETILADI) */}
+            <div className="space-y-3 border-t border-slate-100 pt-3">
+              <p className="text-xs font-bold text-[#E11D48] uppercase tracking-wider flex items-center gap-1 bg-rose-50/80 p-2.5 rounded-lg border border-rose-100">
+                <span className="h-2 w-2 rounded-full bg-rose-600 animate-pulse" />
+                <span className="text-rose-700 font-extrabold">TAVSIYA: PREMIUM PDF YUKLASH 🖨️</span>
+              </p>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                Har qanday printerda o'lchamlar buzilmaydi! <strong>8.5 sm × 5.5 sm</strong> o'lcham va <strong>1 sm li oraliq masofada</strong>, 4 ta A4 varaqqa 3×3 qolipda mukammal joylashadi.
+              </p>
+              
               <div className="flex flex-col gap-2">
+                {/* Print Front PDF */}
+                <button
+                  onClick={handleDownloadFrontPdf}
+                  disabled={docxTask?.active}
+                  className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold active:scale-98 transition-all px-4 py-3 rounded-xl text-[13px] flex justify-between items-center shadow-md shadow-rose-600/10 cursor-pointer"
+                >
+                  <span className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-white" />
+                    <span>Karta oldi tarafi (3×3, pdf)</span>
+                  </span>
+                  <span className="bg-rose-700/60 text-white text-[10px] px-2 py-0.5 rounded-md font-extrabold uppercase">↓ PDF</span>
+                </button>
+
+                {/* Print Back PDF */}
+                <button
+                  onClick={handleDownloadBackPdf}
+                  disabled={docxTask?.active}
+                  className="w-full bg-slate-800 hover:bg-slate-900 border border-slate-705 text-white font-bold active:scale-98 transition-all px-4 py-3 rounded-xl text-[13px] flex justify-between items-center shadow-sm cursor-pointer"
+                >
+                  <span className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-slate-300" />
+                    <span>Karta orqa tarafi (3×3, pdf)</span>
+                  </span>
+                  <span className="bg-slate-755 text-slate-300 text-[10px] px-2 py-0.5 rounded-md font-extrabold uppercase">↓ PDF</span>
+                </button>
+              </div>
+            </div>
+
+            {/* DIRECT PRINT OPTION */}
+            <div className="space-y-2 border-t border-slate-100 pt-3">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">To'g'ridan-to'g'ri chop etish:</p>
+              <button
+                onClick={handleDirectPrint}
+                className="w-full bg-[#10B981] hover:bg-[#059669] active:scale-[0.98] text-white py-3.5 px-4 rounded-xl text-center font-bold text-sm tracking-wide shadow-md transition-all uppercase cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Printer className="h-4 w-4" />
+                <span>brauzerdan chop etish</span>
+              </button>
+            </div>
+
+            {/* WORD DOCUMENTS (SOBIQ ANDOZA) */}
+            <div className="space-y-2 border-t border-slate-100 pt-3">
+              <span className="text-[10px] font-bold text-slate-400 uppercase block tracking-wider">Tuzatilgan Word varianti (DOCX):</span>
+              <p className="text-[10px] text-slate-400 leading-relaxed">
+                Word fayldagi tasvirlar yuklanish muammosi ham to'liq bartaraf qilindi (Daqiq santimetrlarda):
+              </p>
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={handleDownloadFrontDocx}
                   disabled={docxTask?.active}
-                  className="w-full bg-[#F1F5F9] hover:bg-[#E2E8F0] active:scale-98 transition-all px-4 py-3 rounded-xl text-[13px] text-slate-700 flex justify-between items-center font-semibold cursor-pointer border border-slate-200"
+                  className="bg-[#F8FAFC] hover:bg-[#F1F5F9] border border-slate-200 p-2.5 rounded-lg text-xs text-slate-600 font-semibold cursor-pointer text-center flex items-center justify-center gap-1"
                 >
-                  <span className="flex items-center gap-1.5">
-                    <FileText className="h-4 w-4 text-amber-500" />
-                    <span>oldi_tarafi.docx</span>
-                  </span>
-                  <span className="text-[#2563EB] font-bold">↓</span>
+                  <span>oldi_kabi.docx</span>
                 </button>
-
                 <button
                   onClick={handleDownloadBackDocx}
                   disabled={docxTask?.active}
-                  className="w-full bg-[#F1F5F9] hover:bg-[#E2E8F0] active:scale-98 transition-all px-4 py-3 rounded-xl text-[13px] text-slate-700 flex justify-between items-center font-semibold cursor-pointer border border-slate-200"
+                  className="bg-[#F8FAFC] hover:bg-[#F1F5F9] border border-slate-200 p-2.5 rounded-lg text-xs text-slate-600 font-semibold cursor-pointer text-center flex items-center justify-center gap-1"
                 >
-                  <span className="flex items-center gap-1.5">
-                    <FileText className="h-4 w-4 text-amber-500" />
-                    <span>orqa_tarafi.docx</span>
-                  </span>
-                  <span className="text-[#2563EB] font-bold">↓</span>
+                  <span>orqa_kabi.docx</span>
                 </button>
               </div>
-
-              {/* ACTIVE ACTION BUTTON */}
-              <button
-                onClick={activeTab === 'front' ? handleDownloadFrontDocx : handleDownloadBackDocx}
-                disabled={docxTask?.active}
-                className="download-btn w-full bg-[#059669] hover:bg-[#047857] active:scale-[0.98] text-white p-3.5 rounded-lg text-center font-bold text-sm tracking-wide shadow-md transition-all uppercase cursor-pointer flex items-center justify-center gap-2 mt-2"
-              >
-                <Download className="h-4 w-4" />
-                <span>WORD FAYLNI YUKLASH ({activeTab === 'front' ? 'OLDI' : 'ORQA'})</span>
-              </button>
             </div>
 
             {/* PROGRESS FEEDBACK */}

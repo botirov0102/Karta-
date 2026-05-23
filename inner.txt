@@ -1,0 +1,176 @@
+            {/* IF FRONT CARD VIEW ACTIVE */}
+            {activeTab === 'front' && (
+              <div className="space-y-6">
+                
+                {/* ACTIVE SUIT PICKER ACTIONS AND FILTERS */}
+                <div className="bg-white p-4 rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/55 flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-extrabold text-[#1E293B] uppercase tracking-wider block">Guruh boyicha saralash</span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <button
+                      onClick={() => setActiveSuitFilter('ALL')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 border ${
+                        activeSuitFilter === 'ALL'
+                          ? "bg-[#1E293B] border-[#1E293B] text-white shadow-sm"
+                          : "bg-white border-slate-200 hover:bg-slate-50 text-slate-600"
+                      }`}
+                    >
+                      <Layers className="h-3 w-3" /> Barchasi (36)
+                    </button>
+                    {(['H', 'D', 'C', 'S'] as Suit[]).map(st => {
+                      const suitInfo = SUITS_INFO[st];
+                      const currentCountInSuit = deck.filter(c => c.suit === st && c.imageSrc !== null).length;
+                      return (
+                        <button
+                          key={st}
+                          onClick={() => setActiveSuitFilter(st)}
+                          className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 border ${
+                            activeSuitFilter === st
+                              ? "bg-[#1E293B] border-[#1E293B] text-white shadow-sm"
+                              : "bg-white border-slate-200 hover:bg-slate-50 text-slate-600"
+                          }`}
+                        >
+                          <span className={suitInfo.colorClass}>{suitInfo.char}</span>
+                          <span>{suitInfo.nameUz}</span>
+                          <span className={`px-1 rounded text-[10px] ${
+                            currentCountInSuit > 0 
+                              ? "bg-amber-100 text-amber-800 font-bold"
+                              : "bg-slate-100 text-slate-400"
+                          }`}>
+                            {currentCountInSuit}/9
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* THE 36 PLAIN CARD VISUAL GRID */}
+                <div className="bg-white p-5 rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-slate-200/50">
+                  <div className="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
+                    <div>
+                      <h3 className="text-xs font-extrabold text-[#1E293B] uppercase tracking-wider flex items-center gap-1.5">
+                        <Grid3X3 className="h-4 w-4 text-[#2563EB]" />
+                        <span>Karta Oldi Qismlari</span>
+                      </h3>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Rasm joylash uchun karta ustiga bosing.</p>
+                    </div>
+
+                    <div className="text-[11px] font-bold text-slate-500 bg-slate-50 border border-slate-100 px-2.5 py-0.5 rounded">
+                      Chop qilinayapti: {filteredDeck.length} / 36 karta
+                    </div>
+                  </div>
+
+                  {/* High visual card list */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3">
+                    {filteredDeck.map((cardItem) => (
+                      <div key={cardItem.id} className="flex flex-col items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100 hover:border-slate-200 transition-all">
+                        <PlayingCardView 
+                          card={cardItem}
+                          onClick={() => handleEditCardClick(cardItem)}
+                        />
+                        <span className="text-xs font-bold text-slate-500 mt-2 font-mono flex items-center gap-1">
+                          <span className={SUITS_INFO[cardItem.suit].colorClass}>{SUITS_INFO[cardItem.suit].char}</span>
+                          {RANKS_INFO[cardItem.rank].char}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* IF BACK DESIGN VIEW ACTIVE */}
+            {activeTab === 'back' && (
+              <div className="space-y-6 animate-fade-in">
+                
+                {/* ONE MASTER CHOSEN BACK SECTION */}
+                <div className="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200/50">
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    
+                    {/* Left side standard showcase item */}
+                    <div className="md:col-span-5 flex flex-col items-center">
+                      <div className="text-center mb-2">
+                        <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Asosiy Karta Orqa Ko'rinishi</span>
+                      </div>
+                      <div className="w-full max-w-[155px]">
+                        <PlayingCardBackView 
+                          back={back}
+                          onClick={handleEditBackClick}
+                          className="border border-slate-200 shadow-md rounded-xl"
+                        />
+                      </div>
+                      <button
+                        onClick={handleEditBackClick}
+                        className="mt-3.5 px-3 py-1.5 border border-[#2563EB] text-[#2563EB] hover:bg-blue-50 text-xs font-bold rounded-lg transition-all"
+                      >
+                        Rasmni O'zgartirish
+                      </button>
+                    </div>
+
+                    {/* Right side helper presets list */}
+                    <div className="md:col-span-7 space-y-4">
+                      <div>
+                        <span className="text-[10px] font-bold text-[#2563EB] uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded">Yagona orqa dizayn</span>
+                        <h3 className="text-base font-bold text-slate-800 tracking-tight mt-1.5">Universal Karta Orqasi</h3>
+                        <p className="text-xs text-slate-500 leading-relaxed mt-1">
+                          Siz yuklagan yagona rasm orqa.docx faylida avtomatik tarzda 36 ta kartaning hammasiga yagona orqa dizayn qilib joylashtiriladi. Quyidagi tayyor andozalardan ham bemalol foydalanishingiz mumkin:
+                        </p>
+                      </div>
+
+                      {/* Ready backgrounds presets picker */}
+                      <div>
+                        <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Platforma taklif qilgan andozalar (Presets):</span>
+                        <div className="grid grid-cols-2 gap-2">
+                          {BACK_PRESETS.map((p, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => handleApplyBackPreset(p)}
+                              className="group flex items-center gap-2 p-2 border border-slate-200 hover:border-[#2563EB] hover:bg-blue-50/20 active:scale-95 text-left rounded-lg transition-all"
+                            >
+                              <div 
+                                className="h-8 w-5 rounded border border-neutral-300 shadow-xs shrink-0 flex items-center justify-center overflow-hidden"
+                                style={{ backgroundColor: p.color }}
+                              >
+                                <span className="text-[8px] text-white font-mono font-bold leading-none opacity-45">Back</span>
+                              </div>
+                              <div>
+                                <h5 className="text-[11px] font-bold text-slate-700 leading-none group-hover:text-[#2563EB]">{p.nameUz}</h5>
+                                <span className="text-[9px] text-slate-400 block mt-0.5">Classic design</span>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* Grid repetition demonstration */}
+                <div className="bg-white p-5 rounded-xl border border-slate-200/50">
+                  <div className="mb-3.5">
+                    <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Takrorlanuvchi 36 ta karta orqasi chizmasi:</h4>
+                    <p className="text-[11px] text-slate-400">Chop etilganda jami 36 ta kartaning orqasi bir xilda namoyon bo'ladi.</p>
+                  </div>
+
+                  <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-9 gap-1.5 opacity-80 hover:opacity-100 transition-opacity">
+                    {Array.from({ length: 36 }).map((_, id) => (
+                      <div key={id} className="relative aspect-[5.5/8.5] border border-slate-200 rounded-md overflow-hidden bg-neutral-100 shadow-xs">
+                        <div className="absolute inset-0 scale-[1.01]">
+                          <PlayingCardBackView back={back} className="pointer-events-none" />
+                        </div>
+                        <span className="absolute bottom-0.5 right-0.5 font-mono text-[8px] bg-black/40 text-neutral-100 px-0.5 rounded-xs leading-none z-10">
+                          {id + 1}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            )}
+

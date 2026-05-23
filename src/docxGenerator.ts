@@ -20,9 +20,9 @@ import { CardState, BackState } from './types';
 import { renderCardFrontToDataUrl, renderCardBackToDataUrl } from './cardRenderer';
 
 /**
- * Converts a data URL (Base64) from HTML5 Canvas to an ArrayBuffer.
+ * Converts a data URL (Base64) from HTML5 Canvas to a Uint8Array.
  */
-function dataURLToArrayBuffer(dataUrl: string): ArrayBuffer {
+function dataURLToUint8Array(dataUrl: string): Uint8Array {
   const parts = dataUrl.split(';base64,');
   const raw = window.atob(parts[1]);
   const rawLength = raw.length;
@@ -30,7 +30,7 @@ function dataURLToArrayBuffer(dataUrl: string): ArrayBuffer {
   for (let i = 0; i < rawLength; ++i) {
     uInt8Array[i] = raw.charCodeAt(i);
   }
-  return uInt8Array.buffer;
+  return uInt8Array;
 }
 
 /**
@@ -42,7 +42,7 @@ export async function generateFrontDocx(
   onProgress?: (current: number, total: number) => void
 ): Promise<Blob> {
   const totalCards = deck.length;
-  const imageBuffers: ArrayBuffer[] = [];
+  const imageBuffers: Uint8Array[] = [];
 
   // 1. Render all cards to images
   for (let i = 0; i < totalCards; i++) {
@@ -50,7 +50,7 @@ export async function generateFrontDocx(
       onProgress(i + 1, totalCards);
     }
     const dataUrl = await renderCardFrontToDataUrl(deck[i]);
-    const buffer = dataURLToArrayBuffer(dataUrl);
+    const buffer = dataURLToUint8Array(dataUrl);
     imageBuffers.push(buffer);
   }
 
@@ -184,7 +184,7 @@ export async function generateBackDocx(
     onProgress(1, 4);
   }
   const dataUrl = await renderCardBackToDataUrl(back);
-  const backBuffer = dataURLToArrayBuffer(dataUrl);
+  const backBuffer = dataURLToUint8Array(dataUrl);
 
   const documentSectionsChildren: any[] = [];
   

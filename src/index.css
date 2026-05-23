@@ -1,1 +1,73 @@
 @import "tailwindcss";
+
+/* PREMIUM THEME ADJUSTMENT */
+@layer base {
+  body {
+    background-color: #F0F2F5;
+  }
+}
+
+/* DIGITAL PRINTING STYLING SPECIFICATIONS FOR A4 OR LARGE SIZE */
+@media print {
+  /* Setup page geometry and margins */
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  /* Reset layout margins for standard user print */
+  html, body {
+    width: 210mm;
+    height: 297mm;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide entire application shell to only output the print sheets container */
+  #root > div:not(.print-container) {
+    display: none !important;
+  }
+
+  /* Force print sheets wrapper visibility */
+  .print-only-layout {
+    display: block !important;
+  }
+
+  .print-page {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    page-break-after: always !important;
+    page-break-inside: avoid !important;
+    break-after: page !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding-top: 11mm !important;
+    padding-bottom: 11mm !important;
+    padding-left: 12.5mm !important;
+    padding-right: 12.5mm !important;
+    background-color: #ffffff !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  .print-page:last-child {
+    page-break-after: avoid !important;
+    break-after: auto !important;
+  }
+
+  /* Force premium drawing to be crisp and ignore standard user-margins */
+  canvas {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+    image-rendering: -webkit-optimize-contrast !important;
+    image-rendering: crisp-edges !important;
+  }
+}
