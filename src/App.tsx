@@ -771,18 +771,50 @@ export default function App() {
             )}
 
             {/* PRE-PRINT ASSEMBLY MANUALS */}
-            <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-200/50 space-y-3 shadow-sm">
-              <h3 className="text-xs font-bold tracking-wider text-slate-800 uppercase flex items-center gap-1.5 pb-2 border-b border-slate-100">
-                <HelpCircle className="h-4 w-4 text-[#2563EB]" />
-                <span>Chop etish va Yig'ish yo'riqnomasi</span>
+            <div className="bg-white p-6 sm:p-7 rounded-xl border border-slate-200/55 space-y-4 shadow-sm">
+              <h3 className="text-xs font-extrabold tracking-wider text-slate-800 uppercase flex items-center gap-1.5 pb-2 border-b border-rose-100 text-[#E11D48]">
+                <HelpCircle className="h-4 w-4 text-rose-600 animate-pulse" />
+                <span>MUKAMMAL OLD-ORQA CHOP ETISH YO'RIQNOMASI 🖨️</span>
               </h3>
 
-              <ol className="space-y-2 text-xs text-slate-600 list-decimal list-inside pl-0.5 font-normal">
-                <li className="leading-relaxed"><strong className="text-slate-900">Yuklab olish:</strong> Tayyor holatda har ikkala front va back DOCX fayllarini yuklab oling.</li>
-                <li className="leading-relaxed"><strong className="text-slate-900">Printer sozlamalari:</strong> Qog'oz formatini <strong className="text-slate-900">A4 format</strong> deb belgilang hamda "Fit to page" parametrlarini <strong className="text-slate-900">o'chirib qo'ying</strong>.</li>
-                <li className="leading-relaxed"><strong className="text-slate-900">Qalinlik:</strong> Sifat kafolati uchun <strong className="text-slate-900">250g - 300g zichlikdagi</strong> qalin qog'oz ishlating.</li>
-                <li className="leading-relaxed"><strong className="text-slate-900">Ikki tomonlama chop etish:</strong> Agar printer qo'llab-quvvatlasa, ikki tomonlama (duplex) formatida chop eting.</li>
-              </ol>
+              <div className="bg-amber-50/70 border border-amber-100 p-4 rounded-xl text-xs text-amber-900 leading-relaxed font-sans space-y-1.5 shadow-xs">
+                <span className="font-extrabold block uppercase text-[11px] text-amber-800 tracking-wider">⚠️ NEGA OLD VA ORQA TARAFI TO'G'RI KELMAYAPTI?</span>
+                <p>
+                  Karta old va orqa qoliplari A4 qog'oziga <strong>millimetrigacha simmetrik va markazlashtirilgan holda</strong> joylashtirilgan (Chap/O'ng chekka: 12.5 mm, Tepa/Past chekka: 11.0 mm). Agar chop etganda old/orqa chetlar siljib ketsa, muammo <strong>faqatgina printer drayveri dagi auto-shkala sozlamalarida</strong> bo'ladi.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2.5">
+                  <span className="text-[11px] font-extrabold text-[#1E293B] uppercase tracking-wider block">1. PRINTER SOZLAMALARI (CRITICAL):</span>
+                  <ol className="space-y-1.5 text-xs text-slate-600 list-decimal list-inside pl-0.5">
+                    <li className="leading-relaxed">
+                      Chop qilish oynasida <strong>"Haqiqiy o'lcham" (Actual Size yoki 100% Scale)</strong> sozlamasini yoqing.
+                    </li>
+                    <li className="leading-relaxed">
+                      Hech qachon <strong>"Fit to page" (Varaqqa moslash)</strong> yoki <strong>"Scale to fit"</strong> parametrini yoqmang. Aks holda printer sahifani siljitib qo'yadi.
+                    </li>
+                    <li className="leading-relaxed">
+                      <strong>Sarlavha va Kolontitullar (Headers and footers)</strong> sozlamasini o'chirib qo'ying, qog'ozning o'zi mutloq toza bo'lishi kerak.
+                    </li>
+                  </ol>
+                </div>
+
+                <div className="space-y-2.5">
+                  <span className="text-[11px] font-extrabold text-[#1E293B] uppercase tracking-wider block">2. IKKI TOMONLAMA CHOP (DUPLEX) VA QOG'OZ:</span>
+                  <ol className="space-y-1.5 text-xs text-slate-600 list-decimal list-inside pl-0.5">
+                    <li className="leading-relaxed">
+                      Ikki tomonlama chop etish sozlamasida <strong>"Flip on Long Edge" (Uzun cheti bo'ylab aylantirish)</strong> drayverini tanlang.
+                    </li>
+                    <li className="leading-relaxed">
+                      Sifatli va qattiq kartalar uchun maxsus <strong>250g - 300g zichlikdagi (qalin)</strong> qog'ozdan foydalaning.
+                    </li>
+                    <li className="leading-relaxed">
+                      Tavsiya etilgan <strong>oldi_tarafi_3x3.pdf</strong> hamda <strong>orqa_tarafi_3x3.pdf</strong> fayllaridan foydalaning. Chunki PDF format o'lchamlarni 100% saqlab qoladi!
+                    </li>
+                  </ol>
+                </div>
+              </div>
             </div>
 
           </section>

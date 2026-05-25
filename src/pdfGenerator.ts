@@ -85,12 +85,6 @@ export async function generateFrontPdf(
         doc.rect(x, y, CARD_WIDTH_MM, CARD_HEIGHT_MM);
       }
     }
-
-    // Add brief page indicator in the margin
-    doc.setFont('Helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(150, 150, 150);
-    doc.text(`Tayyorlangan vishka: ${page + 1}-sahifa (Front) | A4 O'lcham | 8.5x5.5 sm`, LEFT_MARGIN_MM, PAGE_HEIGHT_MM - 4);
   }
 
   return doc.output('blob');
@@ -153,12 +147,6 @@ export async function generateBackPdf(
         doc.rect(x, y, CARD_WIDTH_MM, CARD_HEIGHT_MM);
       }
     }
-
-    // Add brief page indicator in the margin
-    doc.setFont('Helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(150, 150, 150);
-    doc.text(`Tayyorlangan vishka: ${page + 1}-sahifa (Back/Orqa) | A4 O'lcham | 8.5x5.5 sm`, LEFT_MARGIN_MM, PAGE_HEIGHT_MM - 4);
   }
 
   return doc.output('blob');

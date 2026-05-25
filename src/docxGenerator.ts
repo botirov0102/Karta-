@@ -139,9 +139,14 @@ export async function generateFrontDocx(
 
     documentSectionsChildren.push(table);
 
-    // If it is not the last page, insert a Page Break
+    // If it is not the last page, insert a Page Break with minimized spacing
     if (page < 3) {
-      documentSectionsChildren.push(new Paragraph({ children: [new PageBreak()] }));
+      documentSectionsChildren.push(
+        new Paragraph({
+          spacing: { before: 0, after: 0, line: 240 },
+          children: [new PageBreak()],
+        })
+      );
     }
   }
 
@@ -255,9 +260,14 @@ export async function generateBackDocx(
 
     documentSectionsChildren.push(table);
 
-    // If it is not the last page, insert a Page Break
+    // If it is not the last page, insert a Page Break with minimized spacing
     if (page < 3) {
-      documentSectionsChildren.push(new Paragraph({ children: [new PageBreak()] }));
+      documentSectionsChildren.push(
+        new Paragraph({
+          spacing: { before: 0, after: 0, line: 240 },
+          children: [new PageBreak()],
+        })
+      );
     }
   }
 
