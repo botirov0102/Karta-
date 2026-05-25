@@ -226,7 +226,8 @@ export async function drawCardFront(
   ctx: CanvasRenderingContext2D,
   card: CardState,
   w = 550,
-  h = 850
+  h = 850,
+  showIndicators = true
 ): Promise<void> {
   const suitInfo = SUITS_INFO[card.suit];
   const rankInfo = RANKS_INFO[card.rank];
@@ -294,54 +295,56 @@ export async function drawCardFront(
   // These stay perfectly on top and unalterable.
   // We'll draw an elegant white protective pill/layer behind them so they are readable in any busy image.
   
-  const drawCornerIndicator = (coordX: number, coordY: number, rotate: boolean) => {
-    ctx.save();
-    ctx.translate(coordX, coordY);
-    if (rotate) {
-      ctx.rotate(Math.PI);
-    }
+  if (showIndicators) {
+    const drawCornerIndicator = (coordX: number, coordY: number, rotate: boolean) => {
+      ctx.save();
+      ctx.translate(coordX, coordY);
+      if (rotate) {
+        ctx.rotate(Math.PI);
+      }
 
-    // Modern glowing glass-pill background
-    ctx.shadowColor = 'rgba(0,0,0,0.18)';
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 4;
+      // Modern glowing glass-pill background
+      ctx.shadowColor = 'rgba(0,0,0,0.18)';
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 4;
 
-    ctx.fillStyle = '#ffffff';
-    // Small pill capsule of width 74px, height 128px
-    drawRoundedRect(ctx, -37, -64, 74, 128, 18);
-    ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      // Small pill capsule of width 74px, height 128px
+      drawRoundedRect(ctx, -37, -64, 74, 128, 18);
+      ctx.fill();
 
-    // Subtle edge border around the pill capsule
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
-    ctx.lineWidth = 1;
-    drawRoundedRect(ctx, -37, -64, 74, 128, 18);
-    ctx.stroke();
+      // Subtle edge border around the pill capsule
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.lineWidth = 1;
+      drawRoundedRect(ctx, -37, -64, 74, 128, 18);
+      ctx.stroke();
 
-    // Text Render (Value Rank)
-    ctx.fillStyle = suitInfo.hexColor;
-    ctx.textAlign = 'center';
-    
-    // Adjust size for "10" which contains 2 digits
-    const rankText = rankInfo.char;
-    ctx.font = `600 ${rankText === '10' ? '34px' : '40px'} sans-serif`;
-    ctx.fillText(rankText, 0, -18);
+      // Text Render (Value Rank)
+      ctx.fillStyle = suitInfo.hexColor;
+      ctx.textAlign = 'center';
+      
+      // Adjust size for "10" which contains 2 digits
+      const rankText = rankInfo.char;
+      ctx.font = `600 ${rankText === '10' ? '34px' : '40px'} sans-serif`;
+      ctx.fillText(rankText, 0, -18);
 
-    // Suit Icon Below rank
-    ctx.font = '38px serif';
-    ctx.fillText(suitInfo.char, 0, 26);
+      // Suit Icon Below rank
+      ctx.font = '38px serif';
+      ctx.fillText(suitInfo.char, 0, 26);
 
-    ctx.restore();
-  };
+      ctx.restore();
+    };
 
-  // Top-Left Index (center at x=64, y=90)
-  drawCornerIndicator(64, 90, false);
+    // Top-Left Index (center at x=64, y=90)
+    drawCornerIndicator(64, 90, false);
 
-  // Bottom-Right Index (center at w-64, h-90, rotated 180 degrees)
-  drawCornerIndicator(w - 64, h - 90, true);
+    // Bottom-Right Index (center at w-64, h-90, rotated 180 degrees)
+    drawCornerIndicator(w - 64, h - 90, true);
+  }
 }
 
 /**
@@ -425,13 +428,13 @@ export async function drawCardBack(
 /**
  * Helper to render card to canvas offline and export as data URL.
  */
-export async function renderCardFrontToDataUrl(card: CardState, w = 550, h = 850): Promise<string> {
+export async function renderCardFrontToDataUrl(card: CardState, w = 550, h = 850, showIndicators = true): Promise<string> {
   const canvas = document.createElement('canvas');
   canvas.width = w;
   canvas.height = h;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Could not create offscreen 2D context');
-  await drawCardFront(ctx, card, w, h);
+  await drawCardFront(ctx, card, w, h, showIndicators);
   return canvas.toDataURL('image/png', 0.92);
 }
 

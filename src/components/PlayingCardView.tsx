@@ -7,9 +7,10 @@ interface PlayingCardViewProps {
   card: CardState;
   onClick?: () => void;
   className?: string;
+  showIndicators?: boolean;
 }
 
-export function PlayingCardView({ card, onClick, className = '' }: PlayingCardViewProps) {
+export function PlayingCardView({ card, onClick, className = '', showIndicators = true }: PlayingCardViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(true);
 
@@ -20,11 +21,11 @@ export function PlayingCardView({ card, onClick, className = '' }: PlayingCardVi
     if (!ctx) return;
 
     setIsDrawing(true);
-    // Draw the card front onto the high-resolution canvas
-    drawCardFront(ctx, card, 550, 850)
+    // Draw the card front onto the high-resolution canvas with showIndicators parameter
+    drawCardFront(ctx, card, 550, 850, showIndicators)
       .catch((err) => console.error('Rasm chizishda xato:', err))
       .finally(() => setIsDrawing(false));
-  }, [card]);
+  }, [card, showIndicators]);
 
   const suit = SUITS_INFO[card.suit];
   const rank = RANKS_INFO[card.rank];

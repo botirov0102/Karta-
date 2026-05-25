@@ -25,11 +25,12 @@ const TOP_MARGIN_MM = 11.0;
  */
 export async function generateFrontPdf(
   deck: CardState[],
+  showIndicators: boolean,
   onProgress?: (current: number, total: number) => void
 ): Promise<Blob> {
   const totalCards = deck.length;
   const imagePromises = deck.map(async (card, idx) => {
-    const dataUrl = await renderCardFrontToDataUrl(card);
+    const dataUrl = await renderCardFrontToDataUrl(card, 550, 850, showIndicators);
     if (onProgress) {
       onProgress(idx + 1, totalCards);
     }

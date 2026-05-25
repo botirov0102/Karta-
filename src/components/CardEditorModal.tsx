@@ -24,6 +24,7 @@ interface CardEditorModalProps {
   isBack: boolean;
   onSaveCard: (updatedCard: CardState, applyToAll: boolean) => void;
   onSaveBack: (updatedBack: BackState) => void;
+  showCornerIndicators?: boolean;
 }
 
 export function CardEditorModal({
@@ -34,6 +35,7 @@ export function CardEditorModal({
   isBack,
   onSaveCard,
   onSaveBack,
+  showCornerIndicators = true,
 }: CardEditorModalProps) {
   // Temporary states for local editing in the modal
   const [localCard, setLocalCard] = useState<CardState | null>(null);
@@ -168,16 +170,27 @@ export function CardEditorModal({
 
           <div className="w-full max-w-[210px] drop-shadow-2xl">
             {isBack && localBack ? (
-              <PlayingCardBackView back={localBack} className="max-w-full shadow-2xl border-4 border-white rounded-[1.25rem]" />
+               <PlayingCardBackView back={localBack} className="max-w-full shadow-2xl border-4 border-white rounded-[1.25rem]" />
             ) : localCard ? (
-              <PlayingCardView card={localCard} className="max-w-full shadow-2xl border-4 border-white rounded-[1.25rem]" />
+               <PlayingCardView 
+                 card={localCard} 
+                 className="max-w-full shadow-2xl border-4 border-white rounded-[1.25rem]" 
+                 showIndicators={showCornerIndicators}
+               />
             ) : null}
           </div>
 
           {!isBack && localCard && (
-            <div className="mt-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-medium border border-amber-200/50">
-              <Sparkles className="h-3 w-3 animate-spin duration-1000" />
-              <span>Belgilar ({localCard.suit}{localCard.rank}) o'zgarmas bo'lib ustiga chiziladi</span>
+            <div className="mt-4 flex flex-col gap-1 px-3 py-1.5 rounded-xl bg-amber-50 text-amber-900 text-[11px] font-medium border border-amber-250/50 text-center">
+              <span className="flex items-center justify-center gap-1.5 font-bold text-amber-800">
+                <Sparkles className="h-3 w-3 animate-pulse text-amber-600" />
+                <span>Chekka belgilar holati ({localCard.suit}{localCard.rank})</span>
+              </span>
+              <p className="text-[10px] text-amber-700/80 mt-0.5 leading-tight">
+                {showCornerIndicators 
+                  ? "Yoqilgan: Qiymat belgilari karta burchaklarida o'zgarmas bo'lib ustiga chiziladi" 
+                  : "O'chirilgan: Karta burchaklarida hech qanday belgilar chizilmaydi, cheksiz rasm!"}
+              </p>
             </div>
           )}
         </div>
