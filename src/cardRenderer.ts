@@ -304,37 +304,39 @@ export async function drawCardFront(
       }
 
       // Modern glowing glass-pill background
-      ctx.shadowColor = 'rgba(0,0,0,0.18)';
-      ctx.shadowBlur = 10;
+      ctx.shadowColor = 'rgba(15, 23, 42, 0.16)';
+      ctx.shadowBlur = 12;
       ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 4;
+      ctx.shadowOffsetY = 5;
 
       ctx.fillStyle = '#ffffff';
-      // Small pill capsule of width 74px, height 128px
-      drawRoundedRect(ctx, -37, -64, 74, 128, 18);
+      // Small pill capsule of width 74px, height 128px. Radius of 37px makes it a perfect circular pill!
+      drawRoundedRect(ctx, -37, -64, 74, 128, 37);
       ctx.fill();
 
-      // Subtle edge border around the pill capsule
+      // Subtle edge border around the pill capsule to pop on white images
       ctx.shadowBlur = 0;
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
-      ctx.lineWidth = 1;
-      drawRoundedRect(ctx, -37, -64, 74, 128, 18);
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.15)';
+      ctx.lineWidth = 1.5;
+      drawRoundedRect(ctx, -37, -64, 74, 128, 37);
       ctx.stroke();
 
-      // Text Render (Value Rank)
+      // Text Render Setup (Value Rank and Suit)
       ctx.fillStyle = suitInfo.hexColor;
       ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
       
       // Adjust size for "10" which contains 2 digits
       const rankText = rankInfo.char;
-      ctx.font = `600 ${rankText === '10' ? '34px' : '40px'} sans-serif`;
-      ctx.fillText(rankText, 0, -18);
+      const rankFontSize = rankText === '10' ? '38px' : '44px';
+      ctx.font = `bold ${rankFontSize} system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+      ctx.fillText(rankText, 0, -22);
 
-      // Suit Icon Below rank
-      ctx.font = '38px serif';
-      ctx.fillText(suitInfo.char, 0, 26);
+      // Suit Icon Below rank (robust font-family stack renders solid bold suits on all platforms)
+      ctx.font = `54px "Segoe UI Symbol", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "DejaVu Sans", Arial, sans-serif`;
+      ctx.fillText(suitInfo.char, 0, 24);
 
       ctx.restore();
     };
